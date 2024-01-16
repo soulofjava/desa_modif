@@ -76,7 +76,7 @@ class MY_Controller extends CI_Controller
     {
         parent::__construct();
         $error = $this->session->db_error;
-        if ($error['code'] == 1049 && ! $this->db) {
+        if ($error['code'] == 1049 && !$this->db) {
             return;
         }
 
@@ -113,7 +113,7 @@ class MY_Controller extends CI_Controller
 
     private function cek_config()
     {
-        if (! $this->db) {
+        if (!$this->db) {
             $this->load->database();
         }
 
@@ -124,10 +124,15 @@ class MY_Controller extends CI_Controller
             $this->session->cek_app_key = true;
             redirect('koneksi_database/desaBaru');
         } elseif (Config::count() > 1) {
+            $cek = Config::where('app_key', $appKey)->first();
+            if (!$cek) {
+                $this->session->cek_app_key = true;
+                redirect('koneksi_database/desaBaru');
+            }
             $appKeyDb = Config::appKey()->first();
         }
 
-        if (! empty($appKeyDb->app_key) && $appKey !== $appKeyDb->app_key) {
+        if (!empty($appKeyDb->app_key) && $appKey !== $appKeyDb->app_key) {
             $this->session->cek_app_key = true;
             redirect('koneksi_database/config');
         }
@@ -149,7 +154,7 @@ class Web_Controller extends MY_Controller
         } elseif ($this->setting->offline_mode == 1) {
             $this->load->model('user_model');
             $grup = $this->user_model->sesi_grup($this->session->sesi);
-            if (! $this->user_model->hak_akses($grup, 'web', 'b')) {
+            if (!$this->user_model->hak_akses($grup, 'web', 'b')) {
                 $this->view_maintenance();
             }
         }
@@ -249,12 +254,12 @@ class Mandiri_Controller extends MY_Controller
         $this->is_login = $this->session->is_login;
         $this->header   = identitas();
 
-        if ($this->setting->layanan_mandiri == 0 && ! $this->cek_anjungan) {
+        if ($this->setting->layanan_mandiri == 0 && !$this->cek_anjungan) {
             show_404();
         }
 
         if ($this->session->mandiri != 1) {
-            if (! $this->session->login_ektp) {
+            if (!$this->session->login_ektp) {
                 redirect('layanan-mandiri/masuk');
             } else {
                 redirect('layanan-mandiri/masuk-ektp');
@@ -321,7 +326,7 @@ class Admin_Controller extends MY_Controller
 
         $force    = $this->session->force_change_password;
 
-        if ($force && ! $kode_desa && ! in_array($this->router->class, ['pengguna'])) {
+        if ($force && !$kode_desa && !in_array($this->router->class, ['pengguna'])) {
             redirect('pengguna#sandi');
         }
 
@@ -334,12 +339,12 @@ class Admin_Controller extends MY_Controller
 
         $this->grup = $this->user_model->sesi_grup($this->session->sesi);
         $this->load->model('modul_model');
-        if (! $this->modul_model->modul_aktif($this->controller) && $this->controller != 'pengguna') {
+        if (!$this->modul_model->modul_aktif($this->controller) && $this->controller != 'pengguna') {
             session_error('Fitur ini tidak aktif');
             redirect($_SERVER['HTTP_REFERER']);
         }
 
-        if (! $this->user_model->hak_akses($this->grup, $this->controller, 'b')) {
+        if (!$this->user_model->hak_akses($this->grup, $this->controller, 'b')) {
             if (empty($this->grup)) {
                 $_SESSION['request_uri'] = $_SERVER['REQUEST_URI'];
                 redirect('siteman');
@@ -369,13 +374,13 @@ class Admin_Controller extends MY_Controller
                 ->when($isAdmin->jabatan_id == sekdes()->id, static function ($q) {
                     return $q->where('verifikasi_sekdes', '=', '0');
                 })
-                ->when($isAdmin == null || ! in_array($isAdmin->jabatan_id, [kades()->id, sekdes()->id]), static function ($q) {
+                ->when($isAdmin == null || !in_array($isAdmin->jabatan_id, [kades()->id, sekdes()->id]), static function ($q) {
                     return $q->where('verifikasi_operator', '=', '0')->orWhere('verifikasi_operator', '=', '-1');
                 })
                 ->count();
         }
 
-        if (! config_item('demo_mode')) {
+        if (!config_item('demo_mode')) {
             // cek langganan premium
             $info_langganan = $this->cache->file->get_metadata('status_langganan');
 
@@ -412,7 +417,7 @@ class Admin_Controller extends MY_Controller
         if (empty($controller)) {
             $controller = $this->controller;
         }
-        if (! $this->user_model->hak_akses_url($this->grup, $controller, $akses)) {
+        if (!$this->user_model->hak_akses_url($this->grup, $controller, $akses)) {
             session_error('Anda tidak mempunyai akses pada fitur ini');
             if (empty($this->grup)) {
                 redirect('siteman');
@@ -427,7 +432,7 @@ class Admin_Controller extends MY_Controller
             $controller = $this->controller;
         }
 
-        if (($admin_only && $this->grup != $this->user_model->id_grup(UserGrup::ADMINISTRATOR)) || ! $this->user_model->hak_akses($this->grup, $controller, $akses)) {
+        if (($admin_only && $this->grup != $this->user_model->id_grup(UserGrup::ADMINISTRATOR)) || !$this->user_model->hak_akses($this->grup, $controller, $akses)) {
             session_error('Anda tidak mempunyai akses pada fitur ini');
 
             if (empty($this->grup)) {
@@ -516,7 +521,7 @@ class Anjungan_Controller extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        if (! cek_anjungan()) {
+        if (!cek_anjungan()) {
             redirect('anjungan');
         }
     }
