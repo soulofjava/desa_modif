@@ -1,0 +1,20 @@
+{
+  "aktif": false,
+  "video": [
+    {
+      "id": "1",
+      "judul": "Video 1",
+      "youtube": "R2-vCJisOPY"
+    },
+    {
+      "id": "2",
+      "judul": "Video 2",
+      "youtube": "R2-vCJisOPY"
+    },
+    {
+      "id": "3",
+      "judul": "Video 3",
+      "youtube": "R2-vCJisOPY"
+    }
+  ]
+}
